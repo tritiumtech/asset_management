@@ -10,8 +10,8 @@
         class="avatar"
       />
       <div class="user-info">
-        <div class="user-name">张三</div>
-        <div class="user-dept">IT部 - 资产管理员</div>
+        <div class="user-name">{{ userStore.realName || '未登录' }}</div>
+        <div class="user-dept">{{ userDept }}</div>
       </div>
     </div>
     
@@ -73,19 +73,47 @@
     </van-cell-group>
     
     <div class="logout-btn">
-      <van-button block plain type="danger" @click="logout">退出登录</van-button>
+      <van-button block plain type="danger" @click="handleLogout">退出登录</van-button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { showConfirmDialog } from 'vant'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 
-const logout = () => {
-  localStorage.removeItem('token')
-  router.push('/login')
+const userDept = computed(() => {
+  const roleMap = {
+    'MGR_SYSTEM': '系统管理员',
+    'MGR_ASSET_ADMIN': '资产管理员',
+    'MGR_TRANSFER': '调拨员',
+    'MGR_INVENTORY': '盘点员',
+    'MGR_FINANCE': '财务专员',
+    'USER_STORE_MANAGER': '店长',
+    'USER_DEPT_MANAGER': '部门经理',
+    'USER_EMPLOYEE': '员工',
+    'SUPPLIER_SELLER': '供应商-出售方',
+    'SUPPLIER_RENTER': '供应商-出租方',
+    'SUPPLIER_MAINTAINER': '供应商-维修方'
+  }
+  return roleMap[userStore.roleCode] || '未知角色'
+})
+
+const handleLogout = () => {
+  showConfirmDialog({
+    title: '确认退出',
+    message: '确定要退出登录吗？'
+  }).then(() => {
+    userStore.logout()
+    router.push('/login')
+  }).catch(() => {
+    // 取消退出
+  })
 }
 </script>
 

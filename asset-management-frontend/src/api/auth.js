@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useUserStore } from '../stores/user'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
@@ -8,9 +9,9 @@ const api = axios.create({
 // 请求拦截器
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    const userStore = useUserStore()
+    if (userStore.token) {
+      config.headers.Authorization = `Bearer ${userStore.token}`
     }
     return config
   },
@@ -27,8 +28,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // token过期，清除登录状态并跳转到登录页
-      localStorage.removeItem('token')
-      localStorage.removeItem('userInfo')
+      const userStore = useUserStore()
+      userStore.logout()
       window.location.href = '/login'
     }
     return Promise.reject(error)

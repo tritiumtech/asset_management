@@ -62,8 +62,10 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { login } from '../api/auth'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 const loading = ref(false)
 
 const form = reactive({
@@ -76,9 +78,8 @@ const onSubmit = async (values) => {
   try {
     const res = await login(values)
     if (res.code === 200) {
-      // 保存token
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('userInfo', JSON.stringify(res.data))
+      // 使用Pinia store保存用户信息
+      userStore.setUserInfo(res.data)
       
       showToast({
         type: 'success',
