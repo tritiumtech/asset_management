@@ -50,6 +50,12 @@ const routes = [
     meta: { title: '我的' }
   },
   {
+    path: '/work',
+    name: 'Workbench',
+    component: () => import('@/views/Workbench.vue'),
+    meta: { title: '工作台' }
+  },
+  {
     path: '/my-assets',
     name: 'MyAssets',
     component: () => import('@/views/MyAssets.vue'),
