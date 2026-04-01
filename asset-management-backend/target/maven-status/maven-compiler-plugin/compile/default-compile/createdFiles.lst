@@ -5,10 +5,13 @@ com/drv/assetmanagement/enums/InventoryStatus.class
 com/drv/assetmanagement/repository/AssetTransactionMapper.class
 com/drv/assetmanagement/service/impl/InventoryServiceImpl.class
 com/drv/assetmanagement/dto/VerifyInventoryDTO.class
+com/drv/assetmanagement/entity/Supplier.class
 com/drv/assetmanagement/service/AssetService.class
 com/drv/assetmanagement/controller/InventoryController.class
 com/drv/assetmanagement/dto/WorkflowInstanceDTO.class
+com/drv/assetmanagement/repository/PermissionAuditMapper.class
 com/drv/assetmanagement/dto/ExcelImportRequestDTO.class
+com/drv/assetmanagement/repository/SupplierMapper.class
 com/drv/assetmanagement/dto/AssignAssetDTO.class
 com/drv/assetmanagement/repository/InventoryTaskMapper.class
 com/drv/assetmanagement/enums/InventoryResult.class
@@ -60,3 +63,4 @@ com/drv/assetmanagement/dto/OACallbackDTO$OAOperatorDTO.class
 com/drv/assetmanagement/entity/InventoryTask.class
 com/drv/assetmanagement/service/AssetProcessService.class
 com/drv/assetmanagement/repository/WorkflowApprovalMapper.class
+com/drv/assetmanagement/entity/PermissionAudit.class

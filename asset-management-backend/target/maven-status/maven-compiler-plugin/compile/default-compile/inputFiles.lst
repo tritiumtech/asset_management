@@ -18,6 +18,7 @@
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/service/AssetService.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/enums/AssetCategory.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/AssetManagementApplication.java
+/home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/PermissionAudit.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/AssetProcessApplyDTO.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/enums/OperationType.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/VerificationSubmitDTO.java
@@ -29,6 +30,7 @@
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/OACallbackDTO.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/InventoryItemDTO.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/AssetTransactionMapper.java
+/home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/Supplier.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/InventoryVerification.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/InventoryTaskMapper.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/AssetProcessRecordDTO.java
@@ -41,6 +43,7 @@
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/AssignAssetDTO.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/controller/InventoryController.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/enums/InventoryResult.java
+/home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/SupplierMapper.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/service/ExcelImportService.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/AssetMapper.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/Result.java
@@ -52,6 +55,7 @@
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/WorkflowInstanceMapper.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/Asset.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/service/AssetProcessService.java
+/home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/PermissionAuditMapper.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/InventoryTask.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/WorkflowInstance.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/ExcelImportResultDTO.java

@@ -61,7 +61,42 @@ public class User {
     private String storeName;
 
     /**
-     * 角色 - ADMIN/ASSET_MANAGER/REGION_MANAGER/DEPT_MANAGER/STORE_MANAGER/USER
+     * 用户类型 - SUPPLIER/EMPLOYEE/MANAGER（新增）
+     */
+    private String userType;
+
+    /**
+     * 角色编码（新增）
+     */
+    private String roleCode;
+
+    /**
+     * 子角色 - SELLER/RENTER/MAINTAINER/TRANSFER/INVENTORY（新增）
+     */
+    private String subRole;
+
+    /**
+     * 数据范围 - ALL/DEPT/STORE/SELF/ASSIGNED（新增）
+     */
+    private String dataScope;
+
+    /**
+     * 关联供应商ID（外部用户）（新增）
+     */
+    private Long supplierId;
+
+    /**
+     * 管理的部门列表（JSON）（新增）
+     */
+    private String managedDepts;
+
+    /**
+     * 管理的门店列表（JSON）（新增）
+     */
+    private String managedStores;
+
+    /**
+     * 角色（兼容旧版）
      */
     private String role;
 

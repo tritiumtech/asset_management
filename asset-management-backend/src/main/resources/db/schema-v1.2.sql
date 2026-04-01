@@ -247,12 +247,57 @@ CREATE INDEX idx_wf_approval_workflow ON workflow_approval(workflow_id);
 CREATE INDEX idx_wf_approval_round ON workflow_approval(workflow_id, round);
 
 -- =============================================
--- 9. 初始化数据
+-- 9. 供应商表（新增）
+-- =============================================
+CREATE TABLE IF NOT EXISTS supplier (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    supplier_code VARCHAR(50) NOT NULL UNIQUE COMMENT '供应商编码',
+    supplier_name VARCHAR(100) NOT NULL COMMENT '供应商名称',
+    supplier_type VARCHAR(20) COMMENT '供应商类型：SELLER/RENTER/MAINTAINER',
+    contact_name VARCHAR(50) COMMENT '联系人',
+    contact_phone VARCHAR(20) COMMENT '联系电话',
+    contact_email VARCHAR(100) COMMENT '联系邮箱',
+    address TEXT COMMENT '地址',
+    business_license VARCHAR(100) COMMENT '营业执照号',
+    bank_account VARCHAR(100) COMMENT '银行账号',
+    status VARCHAR(20) COMMENT '状态：合作中/暂停/终止',
+    remark TEXT COMMENT '备注',
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 供应商索引
+CREATE INDEX idx_supplier_type ON supplier(supplier_type);
+CREATE INDEX idx_supplier_status ON supplier(status);
+
+-- =============================================
+-- 10. 权限审计表（新增）
+-- =============================================
+CREATE TABLE IF NOT EXISTS permission_audit (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    operator_id BIGINT NOT NULL COMMENT '操作人ID',
+    operator_name VARCHAR(50) COMMENT '操作人姓名',
+    target_user_id BIGINT NOT NULL COMMENT '被操作用户ID',
+    target_user_name VARCHAR(50) COMMENT '被操作用户姓名',
+    change_type VARCHAR(20) COMMENT '变更类型：ADD/REMOVE/UPDATE',
+    old_roles TEXT COMMENT '变更前角色',
+    new_roles TEXT COMMENT '变更后角色',
+    change_reason VARCHAR(500) COMMENT '变更原因',
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 权限审计索引
+CREATE INDEX idx_audit_operator ON permission_audit(operator_id);
+CREATE INDEX idx_audit_target ON permission_audit(target_user_id);
+CREATE INDEX idx_audit_time ON permission_audit(create_time);
+
+-- =============================================
+-- 11. 初始化数据
 -- =============================================
 
 -- 插入默认管理员用户（密码: admin123）
-INSERT INTO "user" (username, password, real_name, role, status, department) 
-VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '系统管理员', 'ADMIN', '在职', 'IT部');
+INSERT INTO "user" (username, password, real_name, role, user_type, role_code, status, department) 
+VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '系统管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', '在职', 'IT部');
 
 -- 插入测试资产数据
 INSERT INTO asset (asset_code, asset_name, category, brand, model, serial_number, purchase_date, purchase_amount, location_type, location_detail, status) 
@@ -260,3 +305,9 @@ VALUES
 ('NB-26-0001', 'MacBook Pro 16寸', 'NB', 'Apple', 'MacBook Pro 16" M3 Max', 'C02ZW1YJMD6T', '2026-01-15', 29999.00, '总部', '总部-1F-仓库', 'IN_STOCK'),
 ('DS-26-0001', 'Dell显示器 U2723QE', 'DS', 'Dell', 'U2723QE', 'SN123456789', '2026-01-20', 4500.00, '总部', '总部-1F-仓库', 'IN_STOCK'),
 ('IP-26-0001', 'iPad Pro 12.9寸', 'IP', 'Apple', 'iPad Pro 12.9" M2', 'SN987654321', '2026-02-01', 8999.00, '门店', '深圳店-收银台', 'IN_USE');
+
+-- 插入测试供应商
+INSERT INTO supplier (supplier_code, supplier_name, supplier_type, contact_name, contact_phone, status) VALUES
+('SUP001', 'Apple官方授权经销商', 'SELLER', '张经理', '13800138001', '合作中'),
+('SUP002', '联想租赁服务有限公司', 'RENTER', '李经理', '13800138002', '合作中'),
+('SUP003', '快修电脑维修中心', 'MAINTAINER', '王师傅', '13800138003', '合作中');
