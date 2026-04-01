@@ -10,7 +10,7 @@
     <van-tabbar v-model="activeTab" v-if="showTabbar" route>
       <van-tabbar-item to="/" icon="home-o">首页</van-tabbar-item>
       <van-tabbar-item to="/assets" icon="apps-o">资产</van-tabbar-item>
-      <van-tabbar-item to="/inventory" icon="scan">盘点</van-tabbar-item>
+      <van-tabbar-item to="/work" icon="work-o">工作台</van-tabbar-item>
       <van-tabbar-item to="/mine" icon="user-o">我的</van-tabbar-item>
     </van-tabbar>
   </div>
