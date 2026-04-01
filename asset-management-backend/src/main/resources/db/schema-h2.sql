@@ -1,6 +1,6 @@
 -- H2 Database Schema for Asset Management
 
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE IF NOT EXISTS "user" (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS inventory_item (
 );
 
 -- 插入默认管理员用户
-INSERT INTO user (username, password, real_name, role, status, department) 
+INSERT INTO "user" (username, password, real_name, role, status, department) 
 VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '管理员', 'ADMIN', '在职', 'IT部');
 
 -- 插入测试资产数据

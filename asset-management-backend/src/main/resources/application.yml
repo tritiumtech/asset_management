@@ -7,6 +7,12 @@ spring:
   application:
     name: asset-management
 
+  # 禁用Redis Repository自动配置（避免与MyBatis-Plus冲突）
+  data:
+    redis:
+      repositories:
+        enabled: false
+
   # H2 内存数据库（开发测试用，无需安装MySQL）
   datasource:
     url: jdbc:h2:mem:asset_management;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
