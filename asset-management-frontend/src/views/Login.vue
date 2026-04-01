@@ -78,15 +78,22 @@ const onSubmit = async (values) => {
   try {
     const res = await login(values)
     if (res.code === 200) {
-      // 使用Pinia store保存用户信息
-      userStore.setUserInfo(res.data)
+      // 转换后端数据结构为前端store格式
+      const userData = {
+        token: res.data.token,
+        userId: res.data.user.id,
+        username: res.data.user.username,
+        realName: res.data.user.realName,
+        roleCode: res.data.user.role, // 后端返回role，前端使用roleCode
+        roleName: getRoleName(res.data.user.role)
+      }
+      userStore.setUserInfo(userData)
       
       showToast({
         type: 'success',
         message: '登录成功'
       })
       
-      // 跳转到首页
       router.push('/')
     } else {
       showToast({
@@ -102,6 +109,23 @@ const onSubmit = async (values) => {
   } finally {
     loading.value = false
   }
+}
+
+const getRoleName = (role) => {
+  const roleMap = {
+    'SUPER_ADMIN': '系统管理员',
+    'MGR_ASSET_ADMIN': '资产管理员',
+    'MGR_TRANSFER': '调拨员',
+    'MGR_INVENTORY': '盘点员',
+    'MGR_FINANCE': '财务专员',
+    'USER_STORE_MANAGER': '店长',
+    'USER_DEPT_MANAGER': '部门经理',
+    'USER_EMPLOYEE': '员工',
+    'SUPPLIER_SELLER': '供应商-出售方',
+    'SUPPLIER_RENTER': '供应商-出租方',
+    'SUPPLIER_MAINTAINER': '供应商-维修方'
+  }
+  return roleMap[role] || '未知角色'
 }
 </script>
 

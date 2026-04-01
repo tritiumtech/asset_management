@@ -307,7 +307,7 @@ CREATE INDEX idx_audit_time ON permission_audit(create_time);
 
 -- 插入默认管理员用户（密码: admin123）
 INSERT INTO "user" (username, password, real_name, role, user_type, role_code, status, department, is_test_account) 
-VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '系统管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', '在职', 'IT部', 0);
+VALUES ('admin', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '系统管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', '在职', 'IT部', 0);
 
 -- 插入测试资产数据
 INSERT INTO asset (asset_code, asset_name, category, brand, model, serial_number, purchase_date, purchase_amount, location_type, location_detail, status) 
@@ -409,16 +409,16 @@ CREATE INDEX idx_hr_dept_code ON hr_department_sync(hr_dept_code);
 
 -- 测试账户
 INSERT INTO "user" (username, password, real_name, role, user_type, role_code, data_scope, status, department, is_test_account) VALUES
-('test_asset_admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试资产管理员', 'ASSET_ADMIN', 'MANAGER', 'MGR_ASSET_ADMIN', 'ALL', '在职', 'IT部', 1),
-('test_transfer', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试调拨员', 'TRANSFER', 'MANAGER', 'MGR_TRANSFER', 'ASSIGNED', '在职', 'IT部', 1),
-('test_inventory', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试盘点员', 'INVENTORY', 'MANAGER', 'MGR_INVENTORY', 'ASSIGNED', '在职', 'IT部', 1),
-('test_finance', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试财务专员', 'FINANCE', 'MANAGER', 'MGR_FINANCE', 'ALL', '在职', '财务部', 1),
-('test_store_manager', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试店长', 'STORE_MANAGER', 'EMPLOYEE', 'USER_STORE_MANAGER', 'STORE', '在职', '深圳店', 1),
-('test_dept_manager', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试部门经理', 'DEPT_MANAGER', 'EMPLOYEE', 'USER_DEPT_MANAGER', 'DEPT', '在职', '技术部', 1),
-('test_employee', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试员工', 'USER', 'EMPLOYEE', 'USER_EMPLOYEE', 'SELF', '在职', '技术部', 1),
-('test_supplier_seller', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试出售方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_SELLER', 'ORDER', '合作中', NULL, 1),
-('test_supplier_renter', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试出租方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_RENTER', 'ORDER', '合作中', NULL, 1),
-('test_supplier_maintainer', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试维修方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_MAINTAINER', 'ORDER', '合作中', NULL, 1);
+('test_asset_admin', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试资产管理员', 'ASSET_ADMIN', 'MANAGER', 'MGR_ASSET_ADMIN', 'ALL', '在职', 'IT部', 1),
+('test_transfer', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试调拨员', 'TRANSFER', 'MANAGER', 'MGR_TRANSFER', 'ASSIGNED', '在职', 'IT部', 1),
+('test_inventory', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试盘点员', 'INVENTORY', 'MANAGER', 'MGR_INVENTORY', 'ASSIGNED', '在职', 'IT部', 1),
+('test_finance', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试财务专员', 'FINANCE', 'MANAGER', 'MGR_FINANCE', 'ALL', '在职', '财务部', 1),
+('test_store_manager', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试店长', 'STORE_MANAGER', 'EMPLOYEE', 'USER_STORE_MANAGER', 'STORE', '在职', '深圳店', 1),
+('test_dept_manager', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试部门经理', 'DEPT_MANAGER', 'EMPLOYEE', 'USER_DEPT_MANAGER', 'DEPT', '在职', '技术部', 1),
+('test_employee', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试员工', 'USER', 'EMPLOYEE', 'USER_EMPLOYEE', 'SELF', '在职', '技术部', 1),
+('test_supplier_seller', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试出售方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_SELLER', 'ORDER', '合作中', NULL, 1),
+('test_supplier_renter', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试出租方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_RENTER', 'ORDER', '合作中', NULL, 1),
+('test_supplier_maintainer', '$2b$12$4ismFIxBAJ6SoZPSRK1mDOyyCkJx8HicBcMQ0xUhmVi/sMoBJ/syS', '测试维修方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_MAINTAINER', 'ORDER', '合作中', NULL, 1);
 
 -- 测试供应商数据
 INSERT INTO supplier (supplier_code, supplier_name, supplier_type, contact_name, contact_phone, status) VALUES
