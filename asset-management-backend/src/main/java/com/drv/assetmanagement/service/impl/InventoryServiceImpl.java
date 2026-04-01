@@ -30,8 +30,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Result<PageResult<InventoryTaskDTO>> listTasks(Integer pageNum, Integer pageSize) {
         Page<InventoryTask> page = new Page<>(pageNum, pageSize);
-        Page<InventoryTask> result = taskMapper.selectPage(page, new LambdaQueryWrapper<>()
-                .orderByDesc(InventoryTask::getCreateTime));
+        LambdaQueryWrapper<InventoryTask> wrapper = new LambdaQueryWrapper<InventoryTask>()
+                .orderByDesc(InventoryTask::getCreateTime);
+        Page<InventoryTask> result = taskMapper.selectPage(page, wrapper);
         
         PageResult<InventoryTaskDTO> pageResult = new PageResult<>();
         pageResult.setTotal(result.getTotal());

@@ -24,10 +24,10 @@
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/enums/OperationType.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/UserMapper.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/PageResult.java
-/home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/InventoryRecord.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/enums/UserRole.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/service/impl/AssetServiceImpl.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/VerifyInventoryDTO.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/Asset.java
+/home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/entity/InventoryTask.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/dto/InventoryItemDTO.java
 /home/ubuntu/tech/personal_repos/asset_management/asset-management-backend/src/main/java/com/drv/assetmanagement/repository/AssetTransactionMapper.java
