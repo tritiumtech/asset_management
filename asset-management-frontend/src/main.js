@@ -21,7 +21,8 @@ import {
   Form,
   Picker,
   Popup,
-  DatetimePicker,
+  DatePicker,
+  TimePicker,
   Icon,
   Tag,
   Card,
@@ -52,7 +53,7 @@ const app = createApp(App)
 const components = [
   Button, Cell, CellGroup, NavBar, Tabbar, TabbarItem,
   Search, List, PullRefresh, Toast, Dialog, ActionSheet,
-  Field, Form, Picker, Popup, DatetimePicker, Icon, Tag,
+  Field, Form, Picker, Popup, DatePicker, TimePicker, Icon, Tag,
   Card, Empty, Loading, Skeleton, Image, Tabs, Tab, Badge,
   Grid, GridItem, NoticeBar, SwipeCell, Steps, Step, Progress,
   Col, Row
