@@ -71,47 +71,22 @@ public class InventoryItem {
     private String checkedUserName;
 
     /**
-     * 第一轮核实状态 - 待核实/已核实/待确认
+     * 当前状态 - PENDING/SUBMITTED/UNDER_REVIEW/RESOLVED/CLOSED
      */
-    private String firstVerifyStatus;
+    private String currentStatus;
 
     /**
-     * 第一轮核实说明
+     * 当前轮次
      */
-    private String firstVerifyNote;
+    private Integer currentRound;
 
     /**
-     * 第一轮核实人
+     * 是否已结案
      */
-    private String firstVerifyBy;
+    private Boolean isClosed;
 
     /**
-     * 第一轮核实时间
-     */
-    private LocalDateTime firstVerifyTime;
-
-    /**
-     * 第二轮确认状态 - 待确认/已确认
-     */
-    private String secondVerifyStatus;
-
-    /**
-     * 第二轮确认说明
-     */
-    private String secondVerifyNote;
-
-    /**
-     * 第二轮确认人
-     */
-    private String secondVerifyBy;
-
-    /**
-     * 第二轮确认时间
-     */
-    private LocalDateTime secondVerifyTime;
-
-    /**
-     * 最终处理结果 - 无差异/已调整/报损/补录
+     * 最终处理结果
      */
     private String finalResult;
 

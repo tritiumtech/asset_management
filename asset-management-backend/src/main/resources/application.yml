@@ -30,7 +30,7 @@ spring:
   sql:
     init:
       mode: always
-      schema-locations: classpath:db/schema-h2.sql
+      schema-locations: classpath:db/schema-v1.2.sql
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss

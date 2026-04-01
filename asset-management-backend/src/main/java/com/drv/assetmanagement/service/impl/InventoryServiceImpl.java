@@ -174,21 +174,20 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional
     public Result<Void> verifyItem(VerifyInventoryDTO verifyDTO) {
+        // 简化实现，实际应调用InventoryVerificationService
+        // 这里仅做状态更新
         InventoryItem item = itemMapper.selectById(verifyDTO.getItemId());
         if (item == null) {
             return Result.error("盘点记录不存在");
         }
         
-        if ("FIRST".equals(verifyDTO.getVerifyType())) {
-            item.setFirstVerifyStatus(verifyDTO.getStatus());
-            item.setFirstVerifyNote(verifyDTO.getNote());
-            item.setFirstVerifyBy("当前用户"); // TODO: 从SecurityContext获取
-            item.setFirstVerifyTime(LocalDateTime.now());
-        } else if ("SECOND".equals(verifyDTO.getVerifyType())) {
-            item.setSecondVerifyStatus(verifyDTO.getStatus());
-            item.setSecondVerifyNote(verifyDTO.getNote());
-            item.setSecondVerifyBy("当前用户"); // TODO: 从SecurityContext获取
-            item.setSecondVerifyTime(LocalDateTime.now());
+        // 新状态机：更新当前状态
+        if ("PASS".equals(verifyDTO.getStatus())) {
+            item.setCurrentStatus("RESOLVED");
+        } else if ("REJECT".equals(verifyDTO.getStatus())) {
+            item.setCurrentStatus("REJECTED");
+        } else if ("NEED_INFO".equals(verifyDTO.getStatus())) {
+            item.setCurrentStatus("NEED_INFO");
         }
         
         itemMapper.updateById(item);
