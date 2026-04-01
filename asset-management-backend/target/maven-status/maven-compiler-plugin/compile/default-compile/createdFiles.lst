@@ -8,6 +8,7 @@ com/drv/assetmanagement/dto/VerifyInventoryDTO.class
 com/drv/assetmanagement/service/AssetService.class
 com/drv/assetmanagement/controller/InventoryController.class
 com/drv/assetmanagement/dto/WorkflowInstanceDTO.class
+com/drv/assetmanagement/dto/ExcelImportRequestDTO.class
 com/drv/assetmanagement/dto/AssignAssetDTO.class
 com/drv/assetmanagement/repository/InventoryTaskMapper.class
 com/drv/assetmanagement/enums/InventoryResult.class
@@ -19,8 +20,11 @@ com/drv/assetmanagement/dto/AssetQueryDTO.class
 com/drv/assetmanagement/repository/UserMapper.class
 com/drv/assetmanagement/service/impl/InventoryVerificationServiceImpl.class
 com/drv/assetmanagement/AssetManagementApplication.class
+com/drv/assetmanagement/service/impl/ExcelImportServiceImpl$1.class
+com/drv/assetmanagement/dto/ExcelImportResultDTO.class
 com/drv/assetmanagement/dto/OACallbackDTO$OAActionDataDTO.class
 com/drv/assetmanagement/controller/AssetProcessController.class
+com/drv/assetmanagement/service/ExcelImportService.class
 com/drv/assetmanagement/enums/OperationType.class
 com/drv/assetmanagement/entity/InventoryVerification.class
 com/drv/assetmanagement/service/impl/AssetServiceImpl.class
@@ -32,10 +36,12 @@ com/drv/assetmanagement/dto/ScanInventoryDTO.class
 com/drv/assetmanagement/controller/AssetController.class
 com/drv/assetmanagement/dto/InventoryItemDTO.class
 com/drv/assetmanagement/dto/InventoryStatisticsDTO.class
+com/drv/assetmanagement/controller/ExcelImportController.class
 com/drv/assetmanagement/dto/AssetProcessRecordDTO.class
 com/drv/assetmanagement/dto/AssetProcessRecordDTO$ApprovalRecordDTO.class
 com/drv/assetmanagement/entity/WorkflowApproval.class
 com/drv/assetmanagement/controller/InventoryVerificationController.class
+com/drv/assetmanagement/service/impl/ExcelImportServiceImpl.class
 com/drv/assetmanagement/dto/OACallbackDTO.class
 com/drv/assetmanagement/dto/VerificationSubmitDTO.class
 com/drv/assetmanagement/entity/AssetTransaction.class
@@ -45,6 +51,7 @@ com/drv/assetmanagement/service/impl/AssetProcessServiceImpl.class
 com/drv/assetmanagement/repository/InventoryItemMapper.class
 com/drv/assetmanagement/repository/AssetMapper.class
 com/drv/assetmanagement/repository/WorkflowInstanceMapper.class
+com/drv/assetmanagement/dto/ExcelImportResultDTO$ImportDetailDTO.class
 com/drv/assetmanagement/entity/User.class
 com/drv/assetmanagement/dto/InventoryTaskDTO.class
 com/drv/assetmanagement/enums/UserRole.class
