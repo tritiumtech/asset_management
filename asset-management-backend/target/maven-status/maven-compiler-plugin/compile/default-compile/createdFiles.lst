@@ -13,11 +13,14 @@ com/drv/assetmanagement/repository/PermissionAuditMapper.class
 com/drv/assetmanagement/dto/ExcelImportRequestDTO.class
 com/drv/assetmanagement/repository/SupplierMapper.class
 com/drv/assetmanagement/dto/AssignAssetDTO.class
+com/drv/assetmanagement/dto/LoginResponseDTO.class
 com/drv/assetmanagement/repository/InventoryTaskMapper.class
 com/drv/assetmanagement/enums/InventoryResult.class
+com/drv/assetmanagement/utils/JwtUtil.class
 com/drv/assetmanagement/dto/Result.class
 com/drv/assetmanagement/entity/InventoryItem.class
 com/drv/assetmanagement/service/InventoryVerificationService.class
+com/drv/assetmanagement/controller/AuthController.class
 com/drv/assetmanagement/enums/AssetCategory.class
 com/drv/assetmanagement/dto/AssetQueryDTO.class
 com/drv/assetmanagement/entity/SrmSupplierSync.class
@@ -49,11 +52,13 @@ com/drv/assetmanagement/repository/HrEmployeeSyncMapper.class
 com/drv/assetmanagement/config/SecurityConfig.class
 com/drv/assetmanagement/dto/AssetProcessRecordDTO$ApprovalRecordDTO.class
 com/drv/assetmanagement/entity/WorkflowApproval.class
+com/drv/assetmanagement/dto/LoginRequestDTO.class
 com/drv/assetmanagement/controller/InventoryVerificationController.class
 com/drv/assetmanagement/service/impl/ExcelImportServiceImpl.class
 com/drv/assetmanagement/dto/OACallbackDTO.class
 com/drv/assetmanagement/dto/VerificationSubmitDTO.class
 com/drv/assetmanagement/entity/AssetTransaction.class
+com/drv/assetmanagement/service/impl/AuthServiceImpl.class
 com/drv/assetmanagement/dto/PageResult.class
 com/drv/assetmanagement/dto/AssetDTO.class
 com/drv/assetmanagement/service/impl/AssetProcessServiceImpl.class
@@ -61,6 +66,7 @@ com/drv/assetmanagement/repository/InventoryItemMapper.class
 com/drv/assetmanagement/repository/AssetMapper.class
 com/drv/assetmanagement/repository/WorkflowInstanceMapper.class
 com/drv/assetmanagement/dto/ExcelImportResultDTO$ImportDetailDTO.class
+com/drv/assetmanagement/service/AuthService.class
 com/drv/assetmanagement/entity/User.class
 com/drv/assetmanagement/entity/HrEmployeeSync.class
 com/drv/assetmanagement/dto/InventoryTaskDTO.class
@@ -71,3 +77,4 @@ com/drv/assetmanagement/entity/InventoryTask.class
 com/drv/assetmanagement/service/AssetProcessService.class
 com/drv/assetmanagement/repository/WorkflowApprovalMapper.class
 com/drv/assetmanagement/entity/PermissionAudit.class
+com/drv/assetmanagement/dto/LoginResponseDTO$LoginResponseDTOBuilder.class

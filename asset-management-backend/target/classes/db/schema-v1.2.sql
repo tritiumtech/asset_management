@@ -306,8 +306,8 @@ CREATE INDEX idx_audit_time ON permission_audit(create_time);
 -- =============================================
 
 -- 插入默认管理员用户（密码: admin123）
-INSERT INTO "user" (username, password, real_name, role, user_type, role_code, status, department) 
-VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '系统管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', '在职', 'IT部');
+INSERT INTO "user" (username, password, real_name, role, user_type, role_code, status, department, is_test_account) 
+VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '系统管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', '在职', 'IT部', 0);
 
 -- 插入测试资产数据
 INSERT INTO asset (asset_code, asset_name, category, brand, model, serial_number, purchase_date, purchase_amount, location_type, location_detail, status) 

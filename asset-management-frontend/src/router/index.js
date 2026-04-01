@@ -2,6 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue'),
+    meta: { title: '登录', public: true }
+  },
+  {
     path: '/',
     name: 'Home',
     component: () => import('@/views/Home.vue'),
@@ -60,6 +66,20 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title
   }
+  
+  // 登录验证
+  const token = localStorage.getItem('token')
+  if (!to.meta.public && !token) {
+    next('/login')
+    return
+  }
+  
+  // 已登录用户访问登录页，跳转到首页
+  if (to.path === '/login' && token) {
+    next('/')
+    return
+  }
+  
   next()
 })
 
