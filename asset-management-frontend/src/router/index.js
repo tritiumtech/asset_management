@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 
 const routes = [
   {
@@ -68,8 +67,9 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title
   }
   
-  const userStore = useUserStore()
-  const isLoggedIn = userStore.isLoggedIn
+  // 使用localStorage直接检查token，避免Pinia store在初始化前被调用
+  const token = localStorage.getItem('token')
+  const isLoggedIn = !!token
   
   // 未登录用户访问非公开页面，跳转到登录页
   if (!to.meta.public && !isLoggedIn) {
