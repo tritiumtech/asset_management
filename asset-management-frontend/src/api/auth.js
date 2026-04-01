@@ -1,8 +1,12 @@
 import axios from 'axios'
 import { useUserStore } from '../stores/user'
 
+// 生产环境使用相对路径，开发环境使用localhost
+const isDev = import.meta.env.DEV
+const baseURL = isDev ? 'http://localhost:8080/api' : '/api'
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+  baseURL: baseURL,
   timeout: 10000
 })
 
