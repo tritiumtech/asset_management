@@ -2,6 +2,7 @@ package com.drv.assetmanagement.controller;
 
 import com.drv.assetmanagement.dto.*;
 import com.drv.assetmanagement.service.InventoryVerificationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class InventoryVerificationController {
     @PostMapping("/{itemId}/submit")
     public Result<VerificationRecordDTO> submit(
             @PathVariable Long itemId,
-            @RequestBody VerificationSubmitDTO submitDTO) {
+            @Valid @RequestBody VerificationSubmitDTO submitDTO) {
         submitDTO.setItemId(itemId);
         submitDTO.setAction("SUBMIT");
         return verificationService.submitVerification(submitDTO);
@@ -36,7 +37,7 @@ public class InventoryVerificationController {
     @PostMapping("/{itemId}/review")
     public Result<VerificationRecordDTO> review(
             @PathVariable Long itemId,
-            @RequestBody VerificationSubmitDTO reviewDTO) {
+            @Valid @RequestBody VerificationSubmitDTO reviewDTO) {
         reviewDTO.setItemId(itemId);
         reviewDTO.setAction("REVIEW");
         return verificationService.reviewVerification(reviewDTO);
@@ -48,7 +49,7 @@ public class InventoryVerificationController {
     @PostMapping("/{itemId}/return")
     public Result<VerificationRecordDTO> returnForModification(
             @PathVariable Long itemId,
-            @RequestBody VerificationSubmitDTO returnDTO) {
+            @Valid @RequestBody VerificationSubmitDTO returnDTO) {
         returnDTO.setItemId(itemId);
         returnDTO.setAction("RETURN");
         return verificationService.returnForModification(returnDTO);
@@ -84,7 +85,7 @@ public class InventoryVerificationController {
      * OA回调端点 - 支持泛微OA集成
      */
     @PostMapping("/callback")
-    public Result<Void> handleOACallback(@RequestBody OACallbackDTO callbackDTO) {
+    public Result<Void> handleOACallback(@Valid @RequestBody OACallbackDTO callbackDTO) {
         return verificationService.handleOACallback(callbackDTO);
     }
 }

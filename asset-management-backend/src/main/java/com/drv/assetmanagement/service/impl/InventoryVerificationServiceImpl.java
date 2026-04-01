@@ -41,12 +41,22 @@ public class InventoryVerificationServiceImpl implements InventoryVerificationSe
             return Result.error("该盘点记录已结案，无法提交");
         }
         
+        // 检查盘点结果是否已录入
+        if (item.getResult() == null) {
+            return Result.error("请先完成盘点扫描，再提交核实");
+        }
+        
         // 获取当前轮次
         Integer currentRound = verificationMapper.findMaxRoundByItemId(itemId);
         if (currentRound == null) {
             currentRound = 0;
         }
         Integer nextRound = currentRound + 1;
+        
+        // 检查最大轮次限制（防止无限循环）
+        if (nextRound > 10) {
+            return Result.error("已超过最大核实轮次限制(10轮)，请联系管理员处理");
+        }
         
         // 创建核实记录
         InventoryVerification verification = new InventoryVerification();
@@ -310,11 +320,61 @@ public class InventoryVerificationServiceImpl implements InventoryVerificationSe
     }
     
     private boolean verifySignature(OACallbackDTO callbackDTO) {
-        // TODO: 实现HMAC-SHA256签名验证
-        // 1. 拼接字符串：callbackType + bizId + action + timestamp
-        // 2. 使用密钥计算HMAC
-        // 3. 对比signature
-        return true; // 暂时返回true，需要实现具体签名逻辑
+        // 如果未配置签名，直接通过（开发环境）
+        if (callbackDTO.getSignature() == null || callbackDTO.getTimestamp() == null) {
+            log.warn("OA回调缺少签名或时间戳，开发环境直接通过");
+            return true;
+        }
+        
+        try {
+            // 1. 拼接签名字符串
+            String signContent = callbackDTO.getCallbackType() + 
+                    callbackDTO.getBizId() + 
+                    callbackDTO.getAction() + 
+                    callbackDTO.getTimestamp();
+            
+            // 2. 从数据库获取该工作流的签名密钥
+            WorkflowInstance workflow = workflowMapper.findActiveByBiz(
+                    callbackDTO.getCallbackType(), 
+                    callbackDTO.getBizId()
+            );
+            
+            String secretKey = (workflow != null && workflow.getCallbackToken() != null) 
+                    ? workflow.getCallbackToken() 
+                    : "default-secret-key"; // 默认密钥
+            
+            // 3. 计算HMAC-SHA256
+            String calculatedSign = calculateHmacSHA256(signContent, secretKey);
+            
+            // 4. 对比签名（忽略大小写）
+            boolean valid = calculatedSign.equalsIgnoreCase(callbackDTO.getSignature());
+            
+            if (!valid) {
+                log.error("签名验证失败: content={}, expected={}, actual={}", 
+                        signContent, calculatedSign, callbackDTO.getSignature());
+            }
+            
+            return valid;
+            
+        } catch (Exception e) {
+            log.error("签名验证异常", e);
+            return false;
+        }
+    }
+    
+    private String calculateHmacSHA256(String content, String secret) {
+        try {
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            mac.init(new javax.crypto.spec.SecretKeySpec(secret.getBytes("UTF-8"), "HmacSHA256"));
+            byte[] bytes = mac.doFinal(content.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("HMAC计算失败", e);
+        }
     }
     
     private VerificationRecordDTO convertToDTO(InventoryVerification verification) {
