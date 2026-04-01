@@ -987,12 +987,402 @@ CREATE TABLE permission_audit (
 
 ---
 
+## 十五、系统集成与测试账户（新增）
+
+### 15.1 系统集成架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      资产管理系统                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │  SRM集成    │  │  北森HR集成  │  │     测试账户        │ │
+│  │  (供应商)   │  │  (组织架构)  │  │   (开发测试用)      │ │
+│  └──────┬──────┘  └──────┬──────┘  └────────┬────────────┘ │
+│         │                │                   │              │
+│         ▼                ▼                   ▼              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │srm_supplier │  │ hr_employee │  │      user           │ │
+│  │_sync        │  │ _sync       │  │   (测试标记)        │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 15.2 SRM系统集成（供应商）
+
+#### 集成方式
+- **数据同步方向**: SRM → 资产管理系统（单向）
+- **同步频率**: 每日凌晨2:00
+- **同步方式**: 数据库视图/API/文件导入（可配置）
+
+#### 中间表设计
+
+```sql
+-- SRM供应商同步中间表
+CREATE TABLE srm_supplier_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    srm_supplier_code VARCHAR(50) NOT NULL COMMENT 'SRM系统供应商编码',
+    srm_supplier_name VARCHAR(100) NOT NULL COMMENT 'SRM系统供应商名称',
+    supplier_type VARCHAR(20) COMMENT '供应商类型：SELLER/RENTER/MAINTAINER',
+    contact_name VARCHAR(50),
+    contact_phone VARCHAR(20),
+    contact_email VARCHAR(100),
+    address TEXT,
+    business_license VARCHAR(100),
+    bank_account VARCHAR(100),
+    status VARCHAR(20) COMMENT 'SRM状态',
+    
+    -- 同步控制字段
+    sync_status VARCHAR(20) DEFAULT 'PENDING' COMMENT '同步状态：PENDING/SYNCED/FAILED/IGNORED',
+    sync_time TIMESTAMP COMMENT '同步时间',
+    sync_error TEXT COMMENT '同步错误信息',
+    local_supplier_id BIGINT COMMENT '关联本地供应商ID',
+    
+    -- 数据变更追踪
+    srm_create_time TIMESTAMP COMMENT 'SRM创建时间',
+    srm_update_time TIMESTAMP COMMENT 'SRM更新时间',
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 索引
+CREATE INDEX idx_srm_code ON srm_supplier_sync(srm_supplier_code);
+CREATE INDEX idx_srm_sync_status ON srm_supplier_sync(sync_status);
+CREATE INDEX idx_srm_type ON srm_supplier_sync(supplier_type);
+```
+
+#### 同步规则
+
+| 场景 | 处理逻辑 |
+|------|----------|
+| 新增供应商 | SRM新增 → 中间表标记PENDING → 同步到本地supplier表 |
+| 供应商变更 | SRM更新 → 中间表更新 → 同步更新本地supplier表 |
+| 供应商停用 | SRM停用 → 本地标记为"暂停"，不删除 |
+| 类型映射 | SRM分类 → 映射到SELLER/RENTER/MAINTAINER |
+
+#### SRM供应商类型映射
+
+| SRM分类 | 映射类型 | 说明 |
+|---------|----------|------|
+| 设备采购供应商 | SELLER | 设备出售方 |
+| IT服务供应商 | MAINTAINER | 维修方 |
+| 租赁服务商 | RENTER | 出租方 |
+| 办公用品供应商 | SELLER | 物料供应商 |
+
+### 15.3 北森HR系统集成（组织架构）
+
+#### 集成方式
+- **数据同步方向**: 北森HR → 资产管理系统（单向）
+- **同步频率**: 每日凌晨1:00（早于供应商同步）
+- **同步内容**: 员工信息、部门架构、入离职状态
+
+#### 中间表设计
+
+```sql
+-- 北森HR员工同步中间表
+CREATE TABLE hr_employee_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hr_employee_id VARCHAR(50) NOT NULL COMMENT '北森员工ID',
+    hr_employee_no VARCHAR(50) COMMENT '员工工号',
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    department_code VARCHAR(50) COMMENT '部门编码',
+    department_name VARCHAR(100) COMMENT '部门名称',
+    store_code VARCHAR(50) COMMENT '门店编码（门店员工）',
+    store_name VARCHAR(100) COMMENT '门店名称',
+    position VARCHAR(100) COMMENT '职位',
+    employee_type VARCHAR(20) COMMENT '总部员工/门店员工',
+    status VARCHAR(20) COMMENT '在职/离职',
+    join_date DATE,
+    leave_date DATE,
+    manager_id VARCHAR(50) COMMENT '上级ID',
+    
+    -- 同步控制字段
+    sync_status VARCHAR(20) DEFAULT 'PENDING' COMMENT '同步状态',
+    sync_time TIMESTAMP COMMENT '同步时间',
+    sync_error TEXT COMMENT '同步错误信息',
+    local_user_id BIGINT COMMENT '关联本地用户ID',
+    
+    -- 数据变更追踪
+    hr_create_time TIMESTAMP,
+    hr_update_time TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 北森部门同步中间表
+CREATE TABLE hr_department_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hr_dept_code VARCHAR(50) NOT NULL COMMENT '北森部门编码',
+    hr_dept_name VARCHAR(100) NOT NULL,
+    parent_code VARCHAR(50) COMMENT '上级部门编码',
+    dept_level INT COMMENT '部门层级',
+    dept_type VARCHAR(20) COMMENT '部门类型：总部/区域/门店',
+    status VARCHAR(20),
+    
+    sync_status VARCHAR(20) DEFAULT 'PENDING',
+    sync_time TIMESTAMP,
+    local_dept_id BIGINT,
+    
+    hr_create_time TIMESTAMP,
+    hr_update_time TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 索引
+CREATE INDEX idx_hr_emp_id ON hr_employee_sync(hr_employee_id);
+CREATE INDEX idx_hr_emp_status ON hr_employee_sync(sync_status);
+CREATE INDEX idx_hr_dept_code ON hr_department_sync(hr_dept_code);
+```
+
+#### 同步规则
+
+| 场景 | 处理逻辑 |
+|------|----------|
+| 新员工入职 | HR新增 → 中间表PENDING → 创建本地用户（默认USER_EMPLOYEE） |
+| 员工离职 | HR标记离职 → 触发资产回收流程 → 禁用本地账户 |
+| 部门调动 | HR更新部门 → 更新本地用户部门 → 触发资产调拨检查 |
+| 职位变更 | HR更新职位 → 更新本地用户角色（如店长任命） |
+
+#### 角色自动映射
+
+| 北森职位/属性 | 映射角色 | 数据范围 |
+|---------------|----------|----------|
+| 店长/门店经理 | USER_STORE_MANAGER | 本门店 |
+| 部门经理 | USER_DEPT_MANAGER | 本部门 |
+| 普通员工 | USER_EMPLOYEE | 个人 |
+| IT资产管理员 | MGR_ASSET_ADMIN | 全部 |
+
+### 15.4 测试账户体系
+
+#### 测试账户设计原则
+- **标记方式**: 所有测试账户`username`以`test_`前缀
+- **禁用机制**: 生产环境通过配置`app.test-accounts.enabled=false`禁用
+- **密码统一**: 测试账户使用统一测试密码
+- **数据隔离**: 测试数据与生产数据逻辑隔离
+
+#### 测试账户列表
+
+| 用户名 | 密码 | 角色 | 数据范围 | 用途 |
+|--------|------|------|----------|------|
+| **admin** | admin123 | MGR_SYSTEM | 全部 | 系统管理员 |
+| test_asset_admin | test123 | MGR_ASSET_ADMIN | 全部 | 资产管理员测试 |
+| test_transfer | test123 | MGR_TRANSFER | 分配任务 | 调拨者测试 |
+| test_inventory | test123 | MGR_INVENTORY | 分配任务 | 盘点者测试 |
+| test_finance | test123 | MGR_FINANCE | 全部（财务） | 财务专员测试 |
+| test_store_manager | test123 | USER_STORE_MANAGER | 测试门店 | 店长测试 |
+| test_dept_manager | test123 | USER_DEPT_MANAGER | 测试部门 | 部门负责人测试 |
+| test_employee | test123 | USER_EMPLOYEE | 个人 | 普通员工测试 |
+| test_supplier_seller | test123 | SUPPLIER_SELLER | 关联订单 | 出售方测试 |
+| test_supplier_renter | test123 | SUPPLIER_RENTER | 关联订单 | 出租方测试 |
+| test_supplier_maintainer | test123 | SUPPLIER_MAINTAINER | 关联订单 | 维修方测试 |
+
+#### 测试账户初始化SQL
+
+```sql
+-- 系统管理员（生产环境保留）
+INSERT INTO "user" (username, password, real_name, role, user_type, role_code, data_scope, status, department) 
+VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '系统管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', 'ALL', '在职', 'IT部');
+
+-- 测试账户（生产环境禁用）
+INSERT INTO "user" (username, password, real_name, role, user_type, role_code, data_scope, status, department, is_test_account) VALUES
+-- 设备管理者
+('test_asset_admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试资产管理员', 'ASSET_ADMIN', 'MANAGER', 'MGR_ASSET_ADMIN', 'ALL', '在职', 'IT部', true),
+('test_transfer', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试调拨员', 'TRANSFER', 'MANAGER', 'MGR_TRANSFER', 'ASSIGNED', '在职', 'IT部', true),
+('test_inventory', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试盘点员', 'INVENTORY', 'MANAGER', 'MGR_INVENTORY', 'ASSIGNED', '在职', 'IT部', true),
+('test_finance', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试财务专员', 'FINANCE', 'MANAGER', 'MGR_FINANCE', 'ALL', '在职', '财务部', true),
+
+-- 设备使用者
+('test_store_manager', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试店长', 'STORE_MANAGER', 'EMPLOYEE', 'USER_STORE_MANAGER', 'STORE', '在职', '深圳店', true),
+('test_dept_manager', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试部门经理', 'DEPT_MANAGER', 'EMPLOYEE', 'USER_DEPT_MANAGER', 'DEPT', '在职', '技术部', true),
+('test_employee', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试员工', 'USER', 'EMPLOYEE', 'USER_EMPLOYEE', 'SELF', '在职', '技术部', true),
+
+-- 供应商
+('test_supplier_seller', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试出售方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_SELLER', 'ORDER', '合作中', null, true),
+('test_supplier_renter', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试出租方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_RENTER', 'ORDER', '合作中', null, true),
+('test_supplier_maintainer', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试维修方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_MAINTAINER', 'ORDER', '合作中', null, true);
+
+-- 测试供应商数据
+INSERT INTO supplier (supplier_code, supplier_name, supplier_type, contact_name, contact_phone, status) VALUES
+('TEST_SELLER_001', '测试设备出售商', 'SELLER', '张销售', '13800138001', '合作中'),
+('TEST_RENTER_001', '测试设备租赁商', 'RENTER', '李租赁', '13800138002', '合作中'),
+('TEST_MAINTAINER_001', '测试维修服务商', 'MAINTAINER', '王维修', '13800138003', '合作中');
+```
+
+### 15.5 生产环境禁用机制
+
+#### 配置方式
+
+```yaml
+# application-prod.yml
+app:
+  test-accounts:
+    enabled: false  # 生产环境禁用测试账户
+    usernames:      # 明确列出的测试账户
+      - test_asset_admin
+      - test_transfer
+      - test_inventory
+      - test_finance
+      - test_store_manager
+      - test_dept_manager
+      - test_employee
+      - test_supplier_seller
+      - test_supplier_renter
+      - test_supplier_maintainer
+```
+
+#### 禁用实现
+
+```java
+@Component
+public class TestAccountFilter extends OncePerRequestFilter {
+    
+    @Value("${app.test-accounts.enabled:true}")
+    private boolean testAccountsEnabled;
+    
+    @Value("${app.test-accounts.usernames:}")
+    private List<String> testUsernames;
+    
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                    HttpServletResponse response, 
+                                    FilterChain chain) throws ServletException, IOException {
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && !testAccountsEnabled) {
+            String username = auth.getName();
+            if (testUsernames.contains(username)) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("Test accounts are disabled in production environment");
+                return;
+            }
+        }
+        chain.doFilter(request, response);
+    }
+}
+```
+
+### 15.6 同步任务调度
+
+```java
+@Component
+public class DataSyncScheduler {
+    
+    @Autowired
+    private HrDataSyncService hrDataSyncService;
+    
+    @Autowired
+    private SrmDataSyncService srmDataSyncService;
+    
+    /**
+     * HR数据同步 - 每日凌晨1:00
+     */
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void syncHrData() {
+        hrDataSyncService.syncEmployees();
+        hrDataSyncService.syncDepartments();
+    }
+    
+    /**
+     * SRM供应商同步 - 每日凌晨2:00
+     */
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void syncSrmData() {
+        srmDataSyncService.syncSuppliers();
+    }
+}
+```
+
+---
+
+## 附录D: 系统集成数据库表
+
+### D.1 SRM供应商同步中间表
+
+```sql
+CREATE TABLE srm_supplier_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    srm_supplier_code VARCHAR(50) NOT NULL COMMENT 'SRM系统供应商编码',
+    srm_supplier_name VARCHAR(100) NOT NULL COMMENT 'SRM系统供应商名称',
+    supplier_type VARCHAR(20) COMMENT '供应商类型：SELLER/RENTER/MAINTAINER',
+    contact_name VARCHAR(50),
+    contact_phone VARCHAR(20),
+    contact_email VARCHAR(100),
+    address TEXT,
+    business_license VARCHAR(100),
+    bank_account VARCHAR(100),
+    status VARCHAR(20) COMMENT 'SRM状态',
+    sync_status VARCHAR(20) DEFAULT 'PENDING' COMMENT '同步状态',
+    sync_time TIMESTAMP COMMENT '同步时间',
+    sync_error TEXT COMMENT '同步错误信息',
+    local_supplier_id BIGINT COMMENT '关联本地供应商ID',
+    srm_create_time TIMESTAMP COMMENT 'SRM创建时间',
+    srm_update_time TIMESTAMP COMMENT 'SRM更新时间',
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### D.2 北森HR员工同步中间表
+
+```sql
+CREATE TABLE hr_employee_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hr_employee_id VARCHAR(50) NOT NULL COMMENT '北森员工ID',
+    hr_employee_no VARCHAR(50) COMMENT '员工工号',
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    department_code VARCHAR(50) COMMENT '部门编码',
+    department_name VARCHAR(100) COMMENT '部门名称',
+    store_code VARCHAR(50) COMMENT '门店编码',
+    store_name VARCHAR(100) COMMENT '门店名称',
+    position VARCHAR(100) COMMENT '职位',
+    employee_type VARCHAR(20) COMMENT '总部员工/门店员工',
+    status VARCHAR(20) COMMENT '在职/离职',
+    join_date DATE,
+    leave_date DATE,
+    manager_id VARCHAR(50) COMMENT '上级ID',
+    sync_status VARCHAR(20) DEFAULT 'PENDING' COMMENT '同步状态',
+    sync_time TIMESTAMP COMMENT '同步时间',
+    sync_error TEXT COMMENT '同步错误信息',
+    local_user_id BIGINT COMMENT '关联本地用户ID',
+    hr_create_time TIMESTAMP,
+    hr_update_time TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### D.3 北森HR部门同步中间表
+
+```sql
+CREATE TABLE hr_department_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hr_dept_code VARCHAR(50) NOT NULL COMMENT '北森部门编码',
+    hr_dept_name VARCHAR(100) NOT NULL,
+    parent_code VARCHAR(50) COMMENT '上级部门编码',
+    dept_level INT COMMENT '部门层级',
+    dept_type VARCHAR(20) COMMENT '部门类型：总部/区域/门店',
+    status VARCHAR(20),
+    sync_status VARCHAR(20) DEFAULT 'PENDING',
+    sync_time TIMESTAMP,
+    local_dept_id BIGINT,
+    hr_create_time TIMESTAMP,
+    hr_update_time TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
 **文档维护记录**
 
 | 日期 | 版本 | 修改人 | 说明 |
 |------|------|--------|------|
 | 2026-04-01 | v1.0 | 书呆子 | 完善PRD，增加盘点流程、门店管理、入离职联动 |
 | 2026-04-01 | v1.1 | 书呆子 | 新增用户分类与角色管理体系，支持供应商、设备使用者、设备管理者三大类角色 |
+| 2026-04-01 | v1.2 | 书呆子 | 新增系统集成章节：SRM供应商集成、北森HR集成、测试账户体系、生产环境禁用机制 |
 
 ---
 

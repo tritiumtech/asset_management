@@ -20,6 +20,7 @@ com/drv/assetmanagement/entity/InventoryItem.class
 com/drv/assetmanagement/service/InventoryVerificationService.class
 com/drv/assetmanagement/enums/AssetCategory.class
 com/drv/assetmanagement/dto/AssetQueryDTO.class
+com/drv/assetmanagement/entity/SrmSupplierSync.class
 com/drv/assetmanagement/repository/UserMapper.class
 com/drv/assetmanagement/service/impl/InventoryVerificationServiceImpl.class
 com/drv/assetmanagement/AssetManagementApplication.class
@@ -33,14 +34,19 @@ com/drv/assetmanagement/entity/InventoryVerification.class
 com/drv/assetmanagement/service/impl/AssetServiceImpl.class
 com/drv/assetmanagement/service/InventoryService.class
 com/drv/assetmanagement/dto/AssetProcessApplyDTO.class
+com/drv/assetmanagement/entity/HrDepartmentSync.class
 com/drv/assetmanagement/enums/AssetStatus.class
 com/drv/assetmanagement/repository/InventoryVerificationMapper.class
 com/drv/assetmanagement/dto/ScanInventoryDTO.class
+com/drv/assetmanagement/repository/HrDepartmentSyncMapper.class
 com/drv/assetmanagement/controller/AssetController.class
 com/drv/assetmanagement/dto/InventoryItemDTO.class
 com/drv/assetmanagement/dto/InventoryStatisticsDTO.class
 com/drv/assetmanagement/controller/ExcelImportController.class
 com/drv/assetmanagement/dto/AssetProcessRecordDTO.class
+com/drv/assetmanagement/repository/SrmSupplierSyncMapper.class
+com/drv/assetmanagement/repository/HrEmployeeSyncMapper.class
+com/drv/assetmanagement/config/SecurityConfig.class
 com/drv/assetmanagement/dto/AssetProcessRecordDTO$ApprovalRecordDTO.class
 com/drv/assetmanagement/entity/WorkflowApproval.class
 com/drv/assetmanagement/controller/InventoryVerificationController.class
@@ -56,6 +62,7 @@ com/drv/assetmanagement/repository/AssetMapper.class
 com/drv/assetmanagement/repository/WorkflowInstanceMapper.class
 com/drv/assetmanagement/dto/ExcelImportResultDTO$ImportDetailDTO.class
 com/drv/assetmanagement/entity/User.class
+com/drv/assetmanagement/entity/HrEmployeeSync.class
 com/drv/assetmanagement/dto/InventoryTaskDTO.class
 com/drv/assetmanagement/enums/UserRole.class
 com/drv/assetmanagement/dto/AssetProcessApproveDTO.class

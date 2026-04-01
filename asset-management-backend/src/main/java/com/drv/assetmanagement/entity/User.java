@@ -96,6 +96,11 @@ public class User {
     private String managedStores;
 
     /**
+     * 是否测试账户（新增）
+     */
+    private Integer isTestAccount;
+
+    /**
      * 角色（兼容旧版）
      */
     private String role;

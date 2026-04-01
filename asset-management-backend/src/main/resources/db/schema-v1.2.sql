@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS "user" (
     supplier_id BIGINT COMMENT '关联供应商ID（外部用户）',
     managed_depts TEXT COMMENT '管理的部门列表（JSON）',
     managed_stores TEXT COMMENT '管理的门店列表（JSON）',
+    -- 测试账户标记
+    is_test_account TINYINT DEFAULT 0 COMMENT '是否测试账户',
     status VARCHAR(20) COMMENT '在职/离职',
     join_date DATE,
     leave_date DATE,
@@ -319,3 +321,107 @@ INSERT INTO supplier (supplier_code, supplier_name, supplier_type, contact_name,
 ('SUP001', 'Apple官方授权经销商', 'SELLER', '张经理', '13800138001', '合作中'),
 ('SUP002', '联想租赁服务有限公司', 'RENTER', '李经理', '13800138002', '合作中'),
 ('SUP003', '快修电脑维修中心', 'MAINTAINER', '王师傅', '13800138003', '合作中');
+
+-- =============================================
+-- 12. 系统集成中间表（新增）
+-- =============================================
+
+-- SRM供应商同步中间表
+CREATE TABLE IF NOT EXISTS srm_supplier_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    srm_supplier_code VARCHAR(50) NOT NULL COMMENT 'SRM系统供应商编码',
+    srm_supplier_name VARCHAR(100) NOT NULL COMMENT 'SRM系统供应商名称',
+    supplier_type VARCHAR(20) COMMENT '供应商类型：SELLER/RENTER/MAINTAINER',
+    contact_name VARCHAR(50),
+    contact_phone VARCHAR(20),
+    contact_email VARCHAR(100),
+    address TEXT,
+    business_license VARCHAR(100),
+    bank_account VARCHAR(100),
+    status VARCHAR(20) COMMENT 'SRM状态',
+    sync_status VARCHAR(20) DEFAULT 'PENDING' COMMENT '同步状态：PENDING/SYNCED/FAILED/IGNORED',
+    sync_time TIMESTAMP COMMENT '同步时间',
+    sync_error TEXT COMMENT '同步错误信息',
+    local_supplier_id BIGINT COMMENT '关联本地供应商ID',
+    srm_create_time TIMESTAMP COMMENT 'SRM创建时间',
+    srm_update_time TIMESTAMP COMMENT 'SRM更新时间',
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_srm_code ON srm_supplier_sync(srm_supplier_code);
+CREATE INDEX idx_srm_sync_status ON srm_supplier_sync(sync_status);
+CREATE INDEX idx_srm_type ON srm_supplier_sync(supplier_type);
+
+-- 北森HR员工同步中间表
+CREATE TABLE IF NOT EXISTS hr_employee_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hr_employee_id VARCHAR(50) NOT NULL COMMENT '北森员工ID',
+    hr_employee_no VARCHAR(50) COMMENT '员工工号',
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    department_code VARCHAR(50) COMMENT '部门编码',
+    department_name VARCHAR(100) COMMENT '部门名称',
+    store_code VARCHAR(50) COMMENT '门店编码',
+    store_name VARCHAR(100) COMMENT '门店名称',
+    position VARCHAR(100) COMMENT '职位',
+    employee_type VARCHAR(20) COMMENT '总部员工/门店员工',
+    status VARCHAR(20) COMMENT '在职/离职',
+    join_date DATE,
+    leave_date DATE,
+    manager_id VARCHAR(50) COMMENT '上级ID',
+    sync_status VARCHAR(20) DEFAULT 'PENDING' COMMENT '同步状态',
+    sync_time TIMESTAMP COMMENT '同步时间',
+    sync_error TEXT COMMENT '同步错误信息',
+    local_user_id BIGINT COMMENT '关联本地用户ID',
+    hr_create_time TIMESTAMP,
+    hr_update_time TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_hr_emp_id ON hr_employee_sync(hr_employee_id);
+CREATE INDEX idx_hr_emp_status ON hr_employee_sync(sync_status);
+
+-- 北森部门同步中间表
+CREATE TABLE IF NOT EXISTS hr_department_sync (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hr_dept_code VARCHAR(50) NOT NULL COMMENT '北森部门编码',
+    hr_dept_name VARCHAR(100) NOT NULL,
+    parent_code VARCHAR(50) COMMENT '上级部门编码',
+    dept_level INT COMMENT '部门层级',
+    dept_type VARCHAR(20) COMMENT '部门类型：总部/区域/门店',
+    status VARCHAR(20),
+    sync_status VARCHAR(20) DEFAULT 'PENDING',
+    sync_time TIMESTAMP,
+    local_dept_id BIGINT,
+    hr_create_time TIMESTAMP,
+    hr_update_time TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_hr_dept_code ON hr_department_sync(hr_dept_code);
+
+-- =============================================
+-- 13. 测试账户（开发测试用，生产环境禁用）
+-- =============================================
+
+-- 测试账户
+INSERT INTO "user" (username, password, real_name, role, user_type, role_code, data_scope, status, department, is_test_account) VALUES
+('test_asset_admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试资产管理员', 'ASSET_ADMIN', 'MANAGER', 'MGR_ASSET_ADMIN', 'ALL', '在职', 'IT部', 1),
+('test_transfer', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试调拨员', 'TRANSFER', 'MANAGER', 'MGR_TRANSFER', 'ASSIGNED', '在职', 'IT部', 1),
+('test_inventory', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试盘点员', 'INVENTORY', 'MANAGER', 'MGR_INVENTORY', 'ASSIGNED', '在职', 'IT部', 1),
+('test_finance', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试财务专员', 'FINANCE', 'MANAGER', 'MGR_FINANCE', 'ALL', '在职', '财务部', 1),
+('test_store_manager', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试店长', 'STORE_MANAGER', 'EMPLOYEE', 'USER_STORE_MANAGER', 'STORE', '在职', '深圳店', 1),
+('test_dept_manager', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试部门经理', 'DEPT_MANAGER', 'EMPLOYEE', 'USER_DEPT_MANAGER', 'DEPT', '在职', '技术部', 1),
+('test_employee', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试员工', 'USER', 'EMPLOYEE', 'USER_EMPLOYEE', 'SELF', '在职', '技术部', 1),
+('test_supplier_seller', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试出售方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_SELLER', 'ORDER', '合作中', NULL, 1),
+('test_supplier_renter', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试出租方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_RENTER', 'ORDER', '合作中', NULL, 1),
+('test_supplier_maintainer', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '测试维修方', 'SUPPLIER', 'SUPPLIER', 'SUPPLIER_MAINTAINER', 'ORDER', '合作中', NULL, 1);
+
+-- 测试供应商数据
+INSERT INTO supplier (supplier_code, supplier_name, supplier_type, contact_name, contact_phone, status) VALUES
+('TEST_SELLER_001', '测试设备出售商', 'SELLER', '张销售', '13800138001', '合作中'),
+('TEST_RENTER_001', '测试设备租赁商', 'RENTER', '李租赁', '13800138002', '合作中'),
+('TEST_MAINTAINER_001', '测试维修服务商', 'MAINTAINER', '王维修', '13800138003', '合作中');

@@ -12,6 +12,14 @@ CREATE TABLE IF NOT EXISTS "user" (
     employee_type VARCHAR(20),
     store_name VARCHAR(100),
     role VARCHAR(50),
+    -- 角色体系字段
+    user_type VARCHAR(20),
+    role_code VARCHAR(50),
+    sub_role VARCHAR(50),
+    data_scope VARCHAR(20),
+    supplier_id BIGINT,
+    managed_depts TEXT,
+    managed_stores TEXT,
     status VARCHAR(20),
     join_date DATE,
     leave_date DATE,
@@ -125,9 +133,41 @@ CREATE TABLE IF NOT EXISTS inventory_item (
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 供应商表
+CREATE TABLE IF NOT EXISTS supplier (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    supplier_code VARCHAR(50) NOT NULL UNIQUE,
+    supplier_name VARCHAR(100) NOT NULL,
+    supplier_type VARCHAR(20),
+    contact_name VARCHAR(50),
+    contact_phone VARCHAR(20),
+    contact_email VARCHAR(100),
+    address TEXT,
+    business_license VARCHAR(100),
+    bank_account VARCHAR(100),
+    status VARCHAR(20),
+    remark TEXT,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 权限审计表
+CREATE TABLE IF NOT EXISTS permission_audit (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    operator_id BIGINT NOT NULL,
+    operator_name VARCHAR(50),
+    target_user_id BIGINT NOT NULL,
+    target_user_name VARCHAR(50),
+    change_type VARCHAR(20),
+    old_roles TEXT,
+    new_roles TEXT,
+    change_reason VARCHAR(500),
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 插入默认管理员用户
-INSERT INTO "user" (username, password, real_name, role, status, department) 
-VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '管理员', 'ADMIN', '在职', 'IT部');
+INSERT INTO "user" (username, password, real_name, role, user_type, role_code, status, department) 
+VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EO', '管理员', 'ADMIN', 'MANAGER', 'MGR_SYSTEM', '在职', 'IT部');
 
 -- 插入测试资产数据
 INSERT INTO asset (asset_code, asset_name, category, brand, model, serial_number, purchase_date, purchase_amount, location_type, location_detail, status) 
