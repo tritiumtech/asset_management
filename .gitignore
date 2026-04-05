@@ -1,0 +1,57 @@
+# Build output
+target/
+dist/
+build/
+*.jar
+*.war
+*.ear
+*.class
+
+# Dependency directories
+node_modules/
+*.npmrc
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.gradle/
+.nb-gradle/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+*.tmp
+*.temp
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Git
+gitignore.tmp
+
+# Other
+*.bak
+*.swp
+*.swo
+*~
+.cache/
