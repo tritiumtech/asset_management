@@ -101,7 +101,7 @@ const userDept = computed(() => {
     'SUPPLIER_RENTER': '供应商-出租方',
     'SUPPLIER_MAINTAINER': '供应商-维修方'
   }
-  return roleMap[userStore.roleCode] || '未知角色'
+  return userStore.roleName || roleMap[userStore.roleCode] || '未知角色'
 })
 
 const handleLogout = () => {
@@ -173,5 +173,27 @@ const handleLogout = () => {
 
 .logout-btn {
   padding: 20px 16px;
+}
+
+/* PC端适配 */
+@media (min-width: 768px) {
+  .mine-page {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .user-header {
+    padding: 60px 40px;
+  }
+  
+  .user-name {
+    font-size: 24px;
+  }
+  
+  .menu-group {
+    margin: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
 }
 </style>

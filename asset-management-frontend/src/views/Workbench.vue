@@ -245,4 +245,39 @@ const goTo = (path) => {
   font-size: 12px;
   color: #999;
 }
+
+/* PC端适配 */
+@media (min-width: 768px) {
+  .workbench-page {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .section {
+    margin: 16px;
+    border-radius: 12px;
+  }
+  
+  .grid-menu {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .menu-item {
+    padding: 24px;
+  }
+  
+  .menu-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .stat-value {
+    font-size: 28px;
+  }
+}
 </style>

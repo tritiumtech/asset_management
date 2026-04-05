@@ -43,6 +43,78 @@
       </van-grid>
     </div>
 
+    <!-- 资产管理模块（管理员可见） -->
+    <div class="module-section" v-if="isAdmin">
+      <div class="section-header">
+        <span class="section-title">资产管理</span>
+      </div>
+      <div class="module-grid">
+        <div class="module-item" @click="goTo('/category')">
+          <div class="module-icon category">
+            <van-icon name="apps-o" />
+          </div>
+          <div class="module-text">分类管理</div>
+        </div>
+        
+        <div class="module-item" @click="goTo('/assets/add')">
+          <div class="module-icon add">
+            <van-icon name="plus" />
+          </div>
+          <div class="module-text">资产录入</div>
+        </div>
+        
+        <div class="module-item" @click="goTo('/assets/batch-add')">
+          <div class="module-icon batch">
+            <van-icon name="records" />
+          </div>
+          <div class="module-text">批量录入</div>
+        </div>
+        
+        <div class="module-item" @click="goTo('/assets/stock')">
+          <div class="module-icon stock">
+            <van-icon name="shop-o" />
+          </div>
+          <div class="module-text">库存表</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 资产流转模块 -->
+    <div class="module-section">
+      <div class="section-header">
+        <span class="section-title">资产流转</span>
+      </div>
+      <div class="module-grid">
+        <div class="module-item" @click="goTo('/work/receive')">
+          <div class="module-icon receive">
+            <van-icon name="sign" />
+          </div>
+          <div class="module-text">资产领用</div>
+        </div>
+        
+        <div class="module-item" @click="goTo('/work/borrow')">
+          <div class="module-icon borrow">
+            <van-icon name="clock-o" />
+          </div>
+          <div class="module-text">资产借用</div>
+        </div>
+        
+        <div class="module-item" @click="goTo('/work/return')">
+          <div class="module-icon return">
+            <van-icon name="replay" />
+          </div>
+          <div class="module-text">资产归还</div>
+        </div>
+        
+        <div class="module-item" @click="goTo('/work/transfer')">
+          <div class="module-icon transfer">
+            <van-icon name="exchange" />
+          </div>
+          <div class="module-text">调拨申请</div>
+        </div>
+      </div>
+    </div>
+
     <!-- 快捷入口（根据角色动态显示） -->
     <div class="quick-section">
       <div class="section-title">快捷操作</div>
@@ -59,13 +131,6 @@
             <van-icon name="logistics" />
           </div>
           <div class="quick-text">入库质检</div>
-        </div>
-        
-        <div class="quick-item" @click="goTo('/work/transfer')">
-          <div class="quick-icon transfer">
-            <van-icon name="exchange" />
-          </div>
-          <div class="quick-text">调拨申请</div>
         </div>
         
         <div class="quick-item" @click="goTo('/work/repair')">
@@ -88,6 +153,13 @@
           </div>
           <div class="quick-text">资产查询</div>
         </div>
+        
+        <div class="quick-item" @click="goTo('/my-assets')">
+          <div class="quick-icon my">
+            <van-icon name="user-o" />
+          </div>
+          <div class="quick-text">我的资产</div>
+        </div>
       </div>
     </div>
     
@@ -106,6 +178,16 @@
         <van-cell v-if="pendingApproval > 0" title="审批事项" :value="pendingApproval + '个待审批'" is-link @click="goTo('/work')">
           <template #icon>
             <van-icon name="todo-list-o" class="cell-icon" color="#ee0a24" />
+          </template>
+        </van-cell>
+        <van-cell v-if="pendingReceive > 0" title="领用申请" :value="pendingReceive + '个待处理'" is-link @click="goTo('/work/receive')">
+          <template #icon>
+            <van-icon name="sign" class="cell-icon" color="#07c160" />
+          </template>
+        </van-cell>
+        <van-cell v-if="pendingBorrow > 0" title="借用申请" :value="pendingBorrow + '个待处理'" is-link @click="goTo('/work/borrow')">
+          <template #icon>
+            <van-icon name="clock-o" class="cell-icon" color="#ff976a" />
           </template>
         </van-cell>
       </van-cell-group>
@@ -153,7 +235,9 @@ const stats = ref({
 // 待办统计
 const pendingInventory = ref(3)
 const pendingApproval = ref(2)
-const todoCount = computed(() => pendingInventory.value + pendingApproval.value)
+const pendingReceive = ref(1)
+const pendingBorrow = ref(1)
+const todoCount = computed(() => pendingInventory.value + pendingApproval.value + pendingReceive.value + pendingBorrow.value)
 
 const onSearch = () => {
   router.push(`/assets?search=${searchKey.value}`)
@@ -225,18 +309,12 @@ const scanAsset = () => {
   margin-top: 4px;
 }
 
-.quick-section {
+/* 模块区域样式 */
+.module-section {
   margin: 12px;
   padding: 16px;
   background: #fff;
   border-radius: 8px;
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 12px;
 }
 
 .section-header {
@@ -246,12 +324,74 @@ const scanAsset = () => {
   margin-bottom: 12px;
 }
 
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
 .todo-count {
   font-size: 12px;
   color: #ee0a24;
   background: #ffeaea;
   padding: 2px 8px;
   border-radius: 10px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.module-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.module-item:active {
+  transform: scale(0.95);
+}
+
+.module-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+/* 资产管理模块图标 */
+.module-icon.category { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.module-icon.add { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.module-icon.batch { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.module-icon.stock { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+/* 资产流转模块图标 */
+.module-icon.receive { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.module-icon.borrow { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+.module-icon.return { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.module-icon.transfer { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+
+.module-text {
+  font-size: 12px;
+  color: #333;
+}
+
+/* 快捷操作区域 */
+.quick-section {
+  margin: 12px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
 }
 
 .quick-grid {
@@ -285,6 +425,7 @@ const scanAsset = () => {
 .quick-icon.repair { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
 .quick-icon.inventory { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
 .quick-icon.assets { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.quick-icon.my { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
 
 .quick-text {
   font-size: 12px;
@@ -299,5 +440,36 @@ const scanAsset = () => {
 .cell-icon {
   font-size: 20px;
   margin-right: 8px;
+}
+
+/* PC端适配 */
+@media (min-width: 768px) {
+  .home-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .stats-section,
+  .module-section,
+  .quick-section {
+    padding: 20px;
+  }
+  
+  .module-grid,
+  .quick-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .module-icon,
+  .quick-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+  }
+  
+  .module-text,
+  .quick-text {
+    font-size: 14px;
+  }
 }
 </style>

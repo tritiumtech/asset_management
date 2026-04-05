@@ -12,6 +12,7 @@ com/drv/assetmanagement/dto/WorkflowInstanceDTO.class
 com/drv/assetmanagement/repository/PermissionAuditMapper.class
 com/drv/assetmanagement/dto/ExcelImportRequestDTO.class
 com/drv/assetmanagement/repository/SupplierMapper.class
+com/drv/assetmanagement/config/TestDataInitializer.class
 com/drv/assetmanagement/dto/AssignAssetDTO.class
 com/drv/assetmanagement/dto/LoginResponseDTO.class
 com/drv/assetmanagement/repository/InventoryTaskMapper.class
@@ -63,6 +64,7 @@ com/drv/assetmanagement/dto/PageResult.class
 com/drv/assetmanagement/dto/AssetDTO.class
 com/drv/assetmanagement/service/impl/AssetProcessServiceImpl.class
 com/drv/assetmanagement/repository/InventoryItemMapper.class
+com/drv/assetmanagement/config/JwtAuthenticationFilter.class
 com/drv/assetmanagement/repository/AssetMapper.class
 com/drv/assetmanagement/repository/WorkflowInstanceMapper.class
 com/drv/assetmanagement/dto/ExcelImportResultDTO$ImportDetailDTO.class

@@ -2,6 +2,28 @@
   <div class="assets-page">
     <van-nav-bar title="资产列表" fixed placeholder />
     
+    <!-- 统计数据区 -->
+    <div class="stats-header">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">{{ stats.total }}</div>
+          <div class="stat-label">总资产</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ stats.inUse }}</div>
+          <div class="stat-label">已领用</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ stats.inTransfer }}</div>
+          <div class="stat-label">调拨中</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ stats.idle }}</div>
+          <div class="stat-label">超期闲置</div>
+        </div>
+      </div>
+    </div>
+    
     <!-- 搜索栏 -->
     <div class="search-bar">
       <van-search
@@ -75,6 +97,14 @@ const refreshing = ref(false)
 const loading = ref(false)
 const finished = ref(false)
 const defaultImage = 'https://img.yzcdn.cn/vant/cat.jpeg'
+
+// 统计数据
+const stats = ref({
+  total: 0,
+  inUse: 0,
+  inTransfer: 0,
+  idle: 0
+})
 
 const categoryOptions = [
   { text: '全部类别', value: '' },
@@ -151,7 +181,20 @@ const onLoad = () => {
   setTimeout(() => {
     loading.value = false
     finished.value = true
+    // 更新统计数据
+    updateStats()
   }, 1000)
+}
+
+// 更新统计数据
+const updateStats = () => {
+  const total = assets.value.length
+  const inUse = assets.value.filter(a => a.status === 'IN_USE').length
+  const inTransfer = assets.value.filter(a => a.status === 'IN_TRANSFER').length
+  // 超期闲置：6个月未领用（这里简化处理，实际应该根据assignDate计算）
+  const idle = assets.value.filter(a => a.status === 'IN_STOCK').length
+  
+  stats.value = { total, inUse, inTransfer, idle }
 }
 </script>
 
@@ -159,6 +202,35 @@ const onLoad = () => {
 .assets-page {
   background: #f5f5f5;
   min-height: 100vh;
+}
+
+/* 统计数据区 */
+.stats-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 16px;
+  margin-top: 46px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-item {
+  text-align: center;
+  color: #fff;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.9;
 }
 
 .search-bar {
@@ -203,5 +275,35 @@ const onLoad = () => {
 :deep(.van-card__thumb) {
   width: 80px;
   height: 80px;
+}
+
+/* PC端适配 */
+@media (min-width: 768px) {
+  .assets-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .stats-header {
+    margin-top: 0;
+  }
+  
+  .stats-grid {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .stat-value {
+    font-size: 32px;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+  }
+  
+  :deep(.van-card) {
+    margin: 12px auto;
+    max-width: 800px;
+  }
 }
 </style>

@@ -79,13 +79,14 @@ const onSubmit = async (values) => {
     const res = await login(values)
     if (res.code === 200) {
       // 转换后端数据结构为前端store格式
+      // 后端返回扁平结构: { token, userId, username, realName, roleCode, roleName, ... }
       const userData = {
         token: res.data.token,
-        userId: res.data.user.id,
-        username: res.data.user.username,
-        realName: res.data.user.realName,
-        roleCode: res.data.user.role, // 后端返回role，前端使用roleCode
-        roleName: getRoleName(res.data.user.role)
+        userId: res.data.userId,
+        username: res.data.username,
+        realName: res.data.realName,
+        roleCode: res.data.roleCode,
+        roleName: res.data.roleName
       }
       userStore.setUserInfo(userData)
       
@@ -181,5 +182,21 @@ const getRoleName = (role) => {
 
 .login-tips p {
   margin: 4px 0;
+}
+
+/* PC端适配 */
+@media (min-width: 768px) {
+  .login-container {
+    max-width: 450px;
+    padding: 50px 40px;
+  }
+  
+  .login-header h1 {
+    font-size: 28px;
+  }
+  
+  .login-header p {
+    font-size: 16px;
+  }
 }
 </style>

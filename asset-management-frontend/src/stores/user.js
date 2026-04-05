@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
   const username = computed(() => userInfo.value?.username || '')
   const realName = computed(() => userInfo.value?.realName || '')
   const roleCode = computed(() => userInfo.value?.roleCode || '')
+  const roleName = computed(() => userInfo.value?.roleName || '')
 
   // Actions
   function setUserInfo(data) {
@@ -38,6 +39,7 @@ export const useUserStore = defineStore('user', () => {
     username,
     realName,
     roleCode,
+    roleName,
     setUserInfo,
     clearUserInfo,
     logout

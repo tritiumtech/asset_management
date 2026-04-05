@@ -3,7 +3,7 @@ import { useUserStore } from '../stores/user'
 
 // 生产环境使用相对路径，开发环境使用localhost
 const isDev = import.meta.env.DEV
-const baseURL = isDev ? 'http://localhost:8080/api' : '/api'
+const baseURL = isDev ? 'http://localhost:8081/api' : '/api'
 
 const api = axios.create({
   baseURL: baseURL,
