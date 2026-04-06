@@ -1,7 +1,5 @@
 <template>
   <div class="assets-page">
-    <van-nav-bar title="资产列表" fixed placeholder />
-    
     <!-- 统计数据区 -->
     <div class="stats-header">
       <div class="stats-grid">
@@ -206,9 +204,18 @@ const updateStats = () => {
 
 /* 统计数据区 */
 .stats-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 16px;
-  margin-top: 46px;
+  background: #9C020E;
+  padding: 20px;
+  margin-top: 0;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-sizing: border-box;
+  height: 66px;
+  display: flex;
+  align-items: center;
 }
 
 .stats-grid {
@@ -223,13 +230,13 @@ const updateStats = () => {
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 10px;
   opacity: 0.9;
 }
 
@@ -280,12 +287,14 @@ const updateStats = () => {
 /* PC端适配 */
 @media (min-width: 768px) {
   .assets-page {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
   }
   
   .stats-header {
     margin-top: 0;
+    width: 100%;
+    height: 66px;
   }
   
   .stats-grid {
@@ -294,11 +303,11 @@ const updateStats = () => {
   }
   
   .stat-value {
-    font-size: 32px;
+    font-size: 24px;
   }
   
   .stat-label {
-    font-size: 14px;
+    font-size: 12px;
   }
   
   :deep(.van-card) {

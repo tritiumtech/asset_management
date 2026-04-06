@@ -4,8 +4,8 @@
     <div class="user-header">
       <van-image
         round
-        width="80"
-        height="80"
+        width="40"
+        height="40"
         src="https://img.yzcdn.cn/vant/cat.jpeg"
         class="avatar"
       />
@@ -121,14 +121,18 @@ const handleLogout = () => {
 .mine-page {
   background: #f5f5f5;
   min-height: 100vh;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-sizing: border-box;
 }
 
 .user-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px;
+  background: #9C020E;
+  padding: 20px;
   display: flex;
   align-items: center;
   color: #fff;
+  height: 66px;
+  box-sizing: border-box;
 }
 
 .avatar {
@@ -140,13 +144,13 @@ const handleLogout = () => {
 }
 
 .user-name {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 .user-dept {
-  font-size: 14px;
+  font-size: 12px;
   opacity: 0.9;
 }
 
@@ -178,16 +182,17 @@ const handleLogout = () => {
 /* PC端适配 */
 @media (min-width: 768px) {
   .mine-page {
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
   }
   
   .user-header {
-    padding: 60px 40px;
+    padding: 20px;
+    height: 66px;
   }
   
   .user-name {
-    font-size: 24px;
+    font-size: 18px;
   }
   
   .menu-group {

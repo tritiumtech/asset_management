@@ -83,7 +83,7 @@ onMounted(() => {
 /* PC端侧边栏 */
 .pc-sidebar {
   width: 200px;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  background: #9C020E;
   color: #fff;
   position: fixed;
   left: 0;
